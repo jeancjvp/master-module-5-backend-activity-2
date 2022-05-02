@@ -3,6 +3,7 @@ require('dotenv').config();
 const createError = require('http-errors');
 const express = require('express');
 const morgan = require('morgan');
+const mongoose = require('mongoose');
 
 const app = express();
 
@@ -18,6 +19,15 @@ const routes = require('./config/routes.config');
 app.use('/', routes)
 
 // Error handling
+app.use((error, req, res, next) => {
+	if (error instanceof mongoose.Error.ValidationError) {
+		error = createError.BadRequest(error);
+	}
+
+	res.status(error.status || 400).json({
+		message: error.message || 'Bad Request'
+	});
+});
 
 const port = process.env.PORT || 8000;
 

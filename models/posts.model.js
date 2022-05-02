@@ -14,12 +14,20 @@ const posts = new mongoose.Schema(
 			minLength: 5,
 		},
 		author: {
-			type: String,
-			required: true,
+			type: mongoose.Types.ObjectId,
+			ref: 'Users',
 		}
 	},
 	{
-		timestamps: true,
+		timestamps: true, // createAt & updateAt
+		toJSON: {
+			transform: (doc, ret) => {
+				delete ret.__v;
+				ret.id = ret._id;
+				delete ret._id;
+				return ret;
+			}
+		}
 	}
 );
 

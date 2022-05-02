@@ -1,4 +1,5 @@
 const Posts = require('../models/posts.model');
+const createError = require('http-errors');
 
 // Get All Posts
 module.exports.list = (req, res, next) => {
@@ -18,7 +19,7 @@ module.exports.detail = (req, res, next) => {
 			if (post) {
 				res.status(200).json(post);
 			} else {
-				res.status(404).json({ message: 'post not found' });
+				next(createError.NotFound());
 			}
 		})
 		.catch(next);
@@ -32,10 +33,7 @@ module.exports.create = (req, res, next) => {
 		.then((post) => {
 			res.status(201).json(post);
 		})
-		.catch((err) => {
-			res.status(400).json({ message: 'wrong body params'});
-			next();
-		});
+		.catch(next);
 };
 
 // Update Post
@@ -48,7 +46,7 @@ module.exports.update = (req, res, next) => {
 			if (post) {
 				res.status(200).json(post);
 			} else {
-				res.status(404).json({ message: 'post not found' });
+				next(createError.NotFound());
 			}
 		})
 		.catch(next);
@@ -63,7 +61,7 @@ module.exports.delete = (req, res, next) => {
 			if (post) {
 				res.status(204).json({});
 			} else {
-				res.status(404).json({ message: 'post not found' });
+				next(createError.NotFound());
 			}
 		})
 		.catch(next);
